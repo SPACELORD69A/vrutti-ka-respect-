@@ -419,11 +419,11 @@ export default function App() {
 
       // Particles (Burst effect)
       const particleGeo = new THREE.BufferGeometry();
-      const particleCount = 100;
+      const particleCount = 300;
       const posArray = new Float32Array(particleCount * 3);
       for(let i=0; i<particleCount * 3; i++) posArray[i] = 1000; // start off-screen
       particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      const particleMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1, transparent: true, opacity: 0.8 });
+      const particleMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 1.0 });
       const particles = new THREE.Points(particleGeo, particleMat);
       scene.add(particles);
       particlesRef.current = particles;
@@ -774,14 +774,14 @@ export default function App() {
       const count = positions.length / 3;
 
       for (let i = 0; i < count; i++) {
-          positions[i * 3] = origin.x + (Math.random() - 0.5) * 1.5;
-          positions[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 1.5;
-          positions[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 1.5;
+          positions[i * 3] = origin.x + (Math.random() - 0.5) * 0.2;
+          positions[i * 3 + 1] = origin.y + (Math.random() - 0.5) * 0.2;
+          positions[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 0.2;
 
           particleDataRef.current.velocities[i].set(
-              (Math.random() - 0.5) * 0.4,
-              (Math.random() - 0.5) * 0.4,
-              (Math.random() - 0.5) * 0.4
+              (Math.random() - 0.5) * 0.05,
+              (Math.random() - 0.5) * 0.05,
+              (Math.random() - 0.5) * 0.05
           );
           particleDataRef.current.life[i] = 1.0;
       }
@@ -826,14 +826,14 @@ export default function App() {
       
       {/* JARVIS Core HUD element */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[6] opacity-30">
-        <div className="w-[600px] h-[600px] border border-cyan-500/20 rounded-full animate-[spin_40s_linear_infinite] relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-cyan-500/50 rounded-full shadow-[0_0_15px_#06b6d4]"></div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-cyan-500/50 rounded-full shadow-[0_0_15px_#06b6d4]"></div>
+        <div className="w-[300px] h-[300px] md:w-[600px] md:h-[600px] border border-cyan-500/20 rounded-full animate-[spin_40s_linear_infinite] relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 md:w-4 md:h-4 bg-cyan-500/50 rounded-full shadow-[0_0_15px_#06b6d4]"></div>
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 md:w-4 md:h-4 bg-cyan-500/50 rounded-full shadow-[0_0_15px_#06b6d4]"></div>
         </div>
-        <div className="absolute w-[450px] h-[450px] border-2 border-dashed border-cyan-500/30 rounded-full animate-[spin_30s_linear_reverse_infinite]"></div>
-        <div className="absolute w-[300px] h-[300px] border border-amber-500/20 rounded-full animate-[spin_20s_linear_infinite] relative">
-          <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-4 h-1 bg-amber-500/50"></div>
-          <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-1 bg-amber-500/50"></div>
+        <div className="absolute w-[220px] h-[220px] md:w-[450px] md:h-[450px] border-2 border-dashed border-cyan-500/30 rounded-full animate-[spin_30s_linear_reverse_infinite]"></div>
+        <div className="absolute w-[150px] h-[150px] md:w-[300px] md:h-[300px] border border-amber-500/20 rounded-full animate-[spin_20s_linear_infinite] relative">
+          <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-2 h-1 md:w-4 md:h-1 bg-amber-500/50"></div>
+          <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-2 h-1 md:w-4 md:h-1 bg-amber-500/50"></div>
         </div>
       </div>
 
@@ -842,25 +842,25 @@ export default function App() {
       </div>
 
       {/* Header Overlay */}
-      <header className="absolute top-0 left-0 w-full h-16 border-b border-cyan-500/20 flex items-center justify-between px-8 bg-[#000510]/80 backdrop-blur-md z-40 shadow-[0_4px_30px_rgba(6,182,212,0.1)]">
-        <div className="flex items-center gap-4 pointer-events-none">
-          <div className="w-3 h-3 rounded-full bg-cyan-500 shadow-[0_0_12px_#06b6d4] animate-pulse"></div>
-          <h1 className="text-xs font-bold tracking-[0.3em] uppercase text-cyan-50">J.A.R.V.I.S. <span className="text-cyan-500">MK.42</span></h1>
+      <header className="absolute top-0 left-0 w-full h-16 border-b border-cyan-500/20 flex items-center justify-between px-4 md:px-8 bg-[#000510]/80 backdrop-blur-md z-40 shadow-[0_4px_30px_rgba(6,182,212,0.1)]">
+        <div className="flex items-center gap-2 md:gap-4 pointer-events-none min-w-0 mr-2">
+          <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-cyan-500 shadow-[0_0_12px_#06b6d4] animate-pulse shrink-0"></div>
+          <h1 className="text-[10px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.3em] uppercase text-cyan-50 truncate">vrutti ki respect se shadi</h1>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="hidden sm:flex gap-8 font-mono text-[10px] tracking-widest text-cyan-500/70 mr-4">
+        <div className="flex items-center gap-2 md:gap-6 shrink-0">
+          <div className="hidden lg:flex gap-8 font-mono text-[10px] tracking-widest text-cyan-500/70 mr-4">
             <div className="flex flex-col"><span className="opacity-50">SYS.TEMP</span><span>38.2°C</span></div>
             <div className="flex flex-col"><span className="opacity-50">CORE.MEM</span><span>42 TB</span></div>
           </div>
           <button 
             onClick={downloadSnapshot}
-            className="px-4 py-1.5 rounded border bg-purple-500/20 border-purple-500/50 text-purple-400 text-[10px] uppercase font-bold tracking-widest transition-all hover:bg-white/10 hover:scale-105 active:scale-95 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
+            className="px-2 md:px-4 py-1.5 rounded border bg-purple-500/20 border-purple-500/50 text-purple-400 text-[9px] md:text-[10px] uppercase font-bold tracking-wider md:tracking-widest transition-all hover:bg-white/10 hover:scale-105 active:scale-95 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
           >
             CAPTURE
           </button>
           <button 
             onClick={toggleCamera}
-            className={`px-4 py-1.5 rounded border ${isCameraActive ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'bg-red-500/20 border-red-500/50 text-red-400'} text-[10px] uppercase font-bold tracking-widest transition-all hover:bg-white/10 hover:scale-105 active:scale-95`}
+            className={`px-2 md:px-4 py-1.5 rounded border ${isCameraActive ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'bg-red-500/20 border-red-500/50 text-red-400'} text-[9px] md:text-[10px] uppercase font-bold tracking-wider md:tracking-widest transition-all hover:bg-white/10 hover:scale-105 active:scale-95`}
           >
             {isCameraActive ? 'OPTICS ON' : 'OPTICS OFF'}
           </button>
@@ -895,8 +895,8 @@ export default function App() {
 
       {/* Instructions Overlay */}
       {!isLoading && (
-        <aside className="absolute left-8 top-24 w-64 z-40 space-y-6 transition-opacity hover:opacity-40 duration-300 pointer-events-none">
-          <div className="bg-[#000510]/50 backdrop-blur-xl border border-cyan-500/20 p-5 rounded-sm shadow-[0_0_20px_rgba(6,182,212,0.1)] relative overflow-hidden">
+        <aside className="absolute left-4 right-4 md:right-auto bottom-4 md:bottom-auto md:left-8 md:top-24 md:w-64 z-40 flex flex-col gap-4 transition-opacity md:hover:opacity-40 duration-300 pointer-events-none">
+          <div className="hidden md:block bg-[#000510]/50 backdrop-blur-xl border border-cyan-500/20 p-5 rounded-sm shadow-[0_0_20px_rgba(6,182,212,0.1)] relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-50"></div>
             <h2 className="text-[10px] uppercase tracking-widest text-cyan-400 mb-4 font-bold flex items-center gap-2"><span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></span> Left Hand Control</h2>
             <div className="space-y-4">
@@ -913,11 +913,11 @@ export default function App() {
             </div>
           </div>
           
-          <div className="bg-[#000510]/50 backdrop-blur-xl border border-amber-500/20 p-5 rounded-sm shadow-[0_0_20px_rgba(245,158,11,0.1)] pointer-events-auto relative overflow-hidden">
+          <div className="bg-[#000510]/50 backdrop-blur-xl border border-amber-500/20 p-3 md:p-5 rounded-sm shadow-[0_0_20px_rgba(245,158,11,0.1)] pointer-events-auto relative overflow-hidden">
              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
-            <h2 className="text-[10px] uppercase tracking-widest text-amber-400 mb-4 font-bold flex items-center gap-2"><span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span> Right Hand Control</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
+            <h2 className="flex text-[10px] uppercase tracking-widest text-amber-400 mb-3 md:mb-4 font-bold items-center gap-2"><span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span> Right Hand Control</h2>
+            <div className="space-y-2 md:space-y-4">
+              <div className="hidden md:flex justify-between items-center">
                 <span className="text-[10px] text-amber-50 font-mono tracking-widest">{isDrawMode ? "LASER_STYLUS" : "MANIPULATION"}</span>
                 <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] rounded-full uppercase border border-amber-500/30">Active</span>
               </div>
@@ -925,13 +925,13 @@ export default function App() {
               <div className="flex gap-2">
                  <button
                    onClick={() => setIsDrawMode(false)}
-                   className={`flex-1 py-2 rounded border ${!isDrawMode ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-white/5 border-white/10 text-white/40'} text-[9px] uppercase font-bold tracking-widest transition-all hover:bg-amber-500/10`}
+                   className={`flex-1 py-2 md:py-2 rounded border ${!isDrawMode ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-white/5 border-white/10 text-white/40'} text-[9px] uppercase font-bold tracking-widest transition-all hover:bg-amber-500/10`}
                  >
                    Move
                  </button>
                  <button
                    onClick={() => setIsDrawMode(true)}
-                   className={`flex-1 py-2 rounded border ${isDrawMode ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-white/5 border-white/10 text-white/40'} text-[9px] uppercase font-bold tracking-widest transition-all hover:bg-amber-500/10`}
+                   className={`flex-1 py-2 md:py-2 rounded border ${isDrawMode ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-white/5 border-white/10 text-white/40'} text-[9px] uppercase font-bold tracking-widest transition-all hover:bg-amber-500/10`}
                  >
                    Draw
                  </button>
@@ -946,12 +946,12 @@ export default function App() {
                 </button>
               )}
 
-              <div className="p-3 border border-amber-500/30 bg-amber-500/5 rounded flex justify-between items-center">
+              <div className="hidden md:flex p-3 border border-amber-500/30 bg-amber-500/5 rounded justify-between items-center">
                  <span className="text-[10px] text-white/80 font-mono">
                     {isDrawMode ? 'Pinch & Drag to Draw' : 'Pinch & Drag to Move'}
                  </span>
               </div>
-              <div className="mt-4 pt-4 border-t border-white/5">
+              <div className="hidden md:block mt-4 pt-4 border-t border-white/5">
                 <p className="text-[9px] leading-relaxed text-white/40 italic">
                     {isDrawMode ? 'Pinch right hand thumb/index to draw glowing trails in the air.' : 'Pinch right hand thumb/index to move and rotate the active geometry.'}
                 </p>

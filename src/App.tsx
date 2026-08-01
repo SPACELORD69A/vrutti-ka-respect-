@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
 // Mesh generators
@@ -108,60 +107,98 @@ function createDragon() {
 
 function createButterfly() {
     const butterflyRoot = new THREE.Group();
-    let mixer: THREE.AnimationMixer | null = null;
-    let lastTime = 0;
+    const butterfly = new THREE.Group();
     
-    const loader = new GLTFLoader();
-    loader.load(import.meta.env.BASE_URL + 'animated_butterfly.glb', (gltf) => {
-        const model = gltf.scene;
-        
-        // Auto-scale and center the model
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3());
-        const maxDim = Math.max(size.x, size.y, size.z);
-        
-        if (maxDim > 0) {
-            const scale = 1.5 / maxDim;
-            model.scale.set(scale, scale, scale);
-        }
-
-        const center = box.getCenter(new THREE.Vector3());
-        // Apply the same scale to center to offset correctly
-        model.position.sub(center.multiplyScalar(1.5 / maxDim));
-        
-        // Elevate slightly so it floats on the finger
-        model.position.y += 0.5;
-
-        // Traverse to update materials (optional: make it a bit brighter)
-        model.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-                const mesh = child as THREE.Mesh;
-                if (mesh.material) {
-                   mesh.castShadow = true;
-                   mesh.receiveShadow = true;
-                }
-            }
-        });
-        
-        butterflyRoot.add(model);
-        
-        if (gltf.animations && gltf.animations.length > 0) {
-            mixer = new THREE.AnimationMixer(model);
-            const action = mixer.clipAction(gltf.animations[0]);
-            action.play();
-        }
-    }, undefined, (error) => {
-        console.error('Error loading butterfly model:', error);
+    // Scale down the butterfly to fit nicely on the finger
+    butterfly.scale.set(0.15, 0.15, 0.15);
+    // Elevate it slightly
+    butterfly.position.set(0, 0.3, 0);
+    butterflyRoot.add(butterfly);
+    
+    // Materials
+    const bodyMat = new THREE.MeshStandardMaterial({ 
+        color: 0x111111, 
+        roughness: 0.8,
+        metalness: 0.2
+    });
+    
+    const wingMat = new THREE.MeshPhysicalMaterial({ 
+        color: 0x00d2ff, 
+        emissive: 0x0044aa, 
+        emissiveIntensity: 0.5, 
+        roughness: 0.2, 
+        metalness: 0.1,
+        transmission: 0.4, 
+        thickness: 0.05,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.9
     });
 
+    // Body
+    const bodyGeo = new THREE.CapsuleGeometry(0.15, 1.2, 8, 16);
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.rotation.x = Math.PI / 2;
+    body.castShadow = true;
+    butterfly.add(body);
+
+    // Antennae
+    const antennaGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.5, 8);
+    const antennaMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    
+    const leftAntenna = new THREE.Mesh(antennaGeo, antennaMat);
+    leftAntenna.position.set(-0.05, 0.2, 0.7);
+    leftAntenna.rotation.set(Math.PI / 4, 0, Math.PI / 8);
+    butterfly.add(leftAntenna);
+
+    const rightAntenna = new THREE.Mesh(antennaGeo, antennaMat);
+    rightAntenna.position.set(0.05, 0.2, 0.7);
+    rightAntenna.rotation.set(Math.PI / 4, 0, -Math.PI / 8);
+    butterfly.add(rightAntenna);
+
+    // Wing Shape (Procedural)
+    const wingShape = new THREE.Shape();
+    wingShape.moveTo(0, 0);
+    wingShape.bezierCurveTo(0.5, 1.0, 1.5, 1.5, 2.0, 0.8); // Top lobe
+    wingShape.bezierCurveTo(2.5, 0.0, 1.5, -0.5, 1.2, -0.5); // Mid point
+    wingShape.bezierCurveTo(1.5, -1.5, 0.8, -2.0, 0.2, -1.8); // Bottom lobe
+    wingShape.bezierCurveTo(0.1, -1.0, 0, 0, 0, 0);
+
+    const wingGeo = new THREE.ShapeGeometry(wingShape, 32);
+    
+    // Left Wing
+    const leftWingPivot = new THREE.Group();
+    const leftWing = new THREE.Mesh(wingGeo, wingMat);
+    leftWing.rotation.x = -Math.PI / 2;
+    leftWing.position.set(0.1, 0, 0); // Offset slightly from center
+    leftWing.castShadow = true;
+    leftWingPivot.add(leftWing);
+    butterfly.add(leftWingPivot);
+
+    // Right Wing
+    const rightWingPivot = new THREE.Group();
+    const rightWing = new THREE.Mesh(wingGeo, wingMat);
+    rightWing.rotation.x = -Math.PI / 2;
+    rightWing.scale.x = -1; // Mirror for right side
+    rightWing.position.set(-0.1, 0, 0);
+    rightWing.castShadow = true;
+    rightWingPivot.add(rightWing);
+    butterfly.add(rightWingPivot);
+
     butterflyRoot.userData.update = (time: number) => {
-        if (mixer) {
-            if (lastTime === 0) lastTime = time;
-            const delta = (time - lastTime) / 1000;
-            mixer.update(delta);
-            lastTime = time;
-        }
+        // Flapping animation
+        const flapSpeed = 0.015;
+        const angle = Math.sin(time * flapSpeed) * 0.8 + 0.4;
+        leftWingPivot.rotation.z = angle;
+        rightWingPivot.rotation.z = -angle;
+        
+        // Slight bobbing motion
+        butterfly.position.y = 0.3 + Math.sin(time * 0.005) * 0.1;
+        
+        // Slight tilting based on flapping
+        butterfly.rotation.z = Math.sin(time * flapSpeed * 0.5) * 0.1;
     };
+    
     return butterflyRoot;
 }
 

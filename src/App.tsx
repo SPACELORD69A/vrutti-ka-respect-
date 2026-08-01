@@ -565,7 +565,7 @@ export default function App() {
                // MediaPipe handedness is relative to the *image*.
                // Because we process the unmirrored image, a physical right hand is on the left side of the image,
                // and MediaPipe correctly identifies it as "Right".
-               const rawClassification = results.handednesses[index][0].categoryName; const classification = rawClassification === "Left" ? "Right" : "Left";
+               const classification = results.handednesses[index][0].categoryName;
 
                const thumbTip = landmarks[4];
                const indexTip = landmarks[8];
@@ -660,7 +660,7 @@ export default function App() {
 
       if (results.landmarks && results.landmarks.length > 0) {
           results.landmarks.forEach((landmarks: any, index: number) => {
-              const rawClassification = results.handednesses[index][0].categoryName; const classification = rawClassification === "Left" ? "Right" : "Left";
+              const classification = results.handednesses[index][0].categoryName;
               const isRight = classification === 'Right';
               const color = isRight ? '#f59e0b' : '#06b6d4'; // Amber for right, Cyan for left
               
@@ -693,14 +693,40 @@ export default function App() {
               });
               ctx.stroke();
 
+              // Determine if hand is pinching
+              const thumbTip = landmarks[4];
+              const indexTip = landmarks[8];
+              const pinchDist = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
+              const isPinching = pinchDist < 0.05;
+
               // Draw joints
-              ctx.fillStyle = '#ffffff';
-              ctx.shadowBlur = 8;
-              ctx.shadowColor = '#ffffff';
-              landmarks.forEach((lm: any) => {
+              if (isPinching) {
+                  ctx.fillStyle = color;
+                  ctx.shadowBlur = 15;
+                  ctx.shadowColor = color;
+              } else {
+                  ctx.fillStyle = '#ffffff';
+                  ctx.shadowBlur = 8;
+                  ctx.shadowColor = '#ffffff';
+              }
+
+              const time = performance.now();
+              landmarks.forEach((lm: any, idx: number) => {
                   ctx.beginPath();
-                  ctx.arc(lm.x * w, lm.y * h, 3, 0, 2 * Math.PI);
+                  ctx.arc(lm.x * w, lm.y * h, isPinching ? 5 : 3, 0, 2 * Math.PI);
                   ctx.fill();
+
+                  // Ripple effect on pinch fingers
+                  if (isPinching && (idx === 4 || idx === 8)) {
+                      const rippleRadius = 8 + (time % 1000) / 40;
+                      const alpha = Math.max(0, 1 - (time % 1000) / 1000);
+                      ctx.beginPath();
+                      ctx.arc(lm.x * w, lm.y * h, rippleRadius, 0, 2 * Math.PI);
+                      const rgb = isRight ? '245,158,11' : '6,182,212';
+                      ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
+                      ctx.lineWidth = 2;
+                      ctx.stroke();
+                  }
               });
 
               ctx.restore();

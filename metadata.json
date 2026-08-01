@@ -1,0 +1,10 @@
+{
+  "name": "Hand Tracking 3D Canvas",
+  "description": "Interactive 3D WebGL experience using a webcam feed, MediaPipe Hand Landmarker, and Three.js.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

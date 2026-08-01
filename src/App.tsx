@@ -112,7 +112,7 @@ function createButterfly() {
     let lastTime = 0;
     
     const loader = new GLTFLoader();
-    loader.load('/animated_butterfly.glb', (gltf) => {
+    loader.load(import.meta.env.BASE_URL + 'animated_butterfly.glb', (gltf) => {
         const model = gltf.scene;
         
         // Auto-scale and center the model
